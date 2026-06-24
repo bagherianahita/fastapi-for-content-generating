@@ -33,6 +33,11 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 **Login at /docs:** username `demo` / password `demo123` — sample workouts are pre-seeded.
 
+| | URL |
+|---|-----|
+| **API docs (Swagger)** | http://localhost:8000/docs |
+| **Health check** | http://localhost:8000/health |
+
 ---
 
 ## Authentication flow
