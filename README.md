@@ -24,17 +24,14 @@
 
 ---
 
-## Quick start
+## Quick start (employers — demo user included)
 
 ```bash
-python -m venv .venv
-.venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-API docs: http://localhost:8000/docs
+**Login at /docs:** username `demo` / password `demo123` — sample workouts are pre-seeded.
 
 ---
 

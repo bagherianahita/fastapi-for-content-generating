@@ -69,6 +69,7 @@ class Routine(Base):
 
 
 Base.metadata.create_all(bind=engine)
+
 app = FastAPI(title="Workout API", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
@@ -112,6 +113,30 @@ def verify_password(plain: str, hashed: str) -> bool:
 
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
+
+
+def seed_demo_data() -> None:
+    """Create demo user and sample workouts for employer quick-start."""
+    db = SessionLocal()
+    try:
+        user = db.query(User).filter(User.username == "demo").first()
+        if user:
+            return
+        user = User(username="demo", hashed_password=hash_password("demo123"))
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        db.add(Workout(name="Morning Run", description="5 km easy pace", owner_id=user.id))
+        db.add(Workout(name="Upper Body", description="Bench, rows, shoulders", owner_id=user.id))
+        db.add(Routine(name="Weekday Plan", owner_id=user.id))
+        db.commit()
+    finally:
+        db.close()
+
+
+@app.on_event("startup")
+def startup_seed() -> None:
+    seed_demo_data()
 
 
 def create_token(data: dict) -> str:
