@@ -1,4 +1,4 @@
-# Workout & Routine API
+﻿# Workout & Routine API
 
 **FastAPI backend** for user accounts, workout sessions, and custom routine planning with JWT authentication and SQLAlchemy ORM.
 
@@ -24,7 +24,7 @@
 
 ---
 
-## Quick start (employers — demo user included)
+## Quick start
 
 ```bash
 pip install -r requirements.txt
