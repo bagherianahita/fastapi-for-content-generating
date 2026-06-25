@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Workout & Routine API Demo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+  <div class="max-w-4xl mx-auto p-8">
+    <header class="mb-8 flex justify-between items-center">
+      <div>
+        <h1 class="text-3xl font-bold">Workout & Routine API</h1>
+        <p class="text-slate-400">FastAPI demo — JWT auth, workouts, routines (demo / demo123)</p>
+      </div>
+      <div id="status" class="px-4 py-2 rounded-lg bg-emerald-900 text-emerald-200 text-sm font-semibold">Checking…</div>
+    </header>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <h2 class="font-semibold mb-4">Login</h2>
+        <label class="text-xs text-slate-400">Username</label>
+        <input id="user" class="w-full mb-3 p-2 rounded bg-slate-800 border border-slate-700" value="demo" />
+        <label class="text-xs text-slate-400">Password</label>
+        <input id="pass" type="password" class="w-full mb-4 p-2 rounded bg-slate-800 border border-slate-700" value="demo123" />
+        <button id="btnLogin" class="w-full bg-cyan-600 hover:bg-cyan-500 py-2 rounded-lg font-semibold">Get token & load workouts</button>
+        <p class="text-xs text-slate-500 mt-3"><a class="underline text-cyan-400" href="/docs">Swagger /docs</a></p>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <h2 class="font-semibold mb-4">Your workouts</h2>
+        <pre id="output" class="text-xs font-mono text-green-300 bg-slate-950 p-4 rounded-lg min-h-[200px] overflow-auto">Click login to fetch /workouts…</pre>
+      </div>
+    </div>
+  </div>
+  <script>
+    async function loginAndFetch() {
+      const user = document.getElementById('user').value;
+      const pass = document.getElementById('pass').value;
+      const form = new URLSearchParams();
+      form.set('username', user);
+      form.set('password', pass);
+      const loginRes = await fetch('/auth/login', { method: 'POST', body: form });
+      if (!loginRes.ok) throw new Error('Login failed');
+      const { access_token } = await loginRes.json();
+      const wRes = await fetch('/workouts', { headers: { Authorization: 'Bearer ' + access_token } });
+      const workouts = await wRes.json();
+      const rRes = await fetch('/routines', { headers: { Authorization: 'Bearer ' + access_token } });
+      const routines = await rRes.json();
+      document.getElementById('output').textContent = JSON.stringify({ workouts, routines }, null, 2);
+    }
+    fetch('/health').then(r => {
+      document.getElementById('status').textContent = r.ok ? 'API Online' : 'API Error';
+    }).catch(() => { document.getElementById('status').textContent = 'API Offline'; });
+    document.getElementById('btnLogin').onclick = async () => {
+      try { await loginAndFetch(); } catch (e) { document.getElementById('output').textContent = e.message; }
+    };
+    loginAndFetch().catch(() => {});
+  </script>
+</body>
+</html>

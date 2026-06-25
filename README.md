@@ -28,15 +28,18 @@
 
 ```bash
 pip install -r requirements.txt
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+uvicorn main:app --port 8002 --host 127.0.0.1
 ```
 
-**Login at /docs:** username `demo` / password `demo123` — sample workouts are pre-seeded.
+**Browser demo:** http://localhost:8002 — auto-login as `demo` / `demo123`
 
 | | URL |
 |---|-----|
-| **API docs (Swagger)** | http://localhost:8000/docs |
-| **Health check** | http://localhost:8000/health |
+| **Web UI (demo)** | http://localhost:8002 |
+| **API docs (Swagger)** | http://localhost:8002/docs |
+| **Health check** | http://localhost:8002/health |
+
+> Port **8002** avoids conflicts with other local APIs on 8000.
 
 ---
 

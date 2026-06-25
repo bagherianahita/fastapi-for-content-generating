@@ -2,9 +2,13 @@ import os
 from datetime import datetime, timedelta, timezone
 
 import bcrypt
+from pathlib import Path
+
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.staticfiles import StaticFiles
 from jose import JWTError, jwt
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings
@@ -70,14 +74,24 @@ class Routine(Base):
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Workout API", version="1.0.0")
+STATIC_DIR = Path(__file__).parent / "static"
+DEFAULT_PORT = 8002
+
+app = FastAPI(
+    title="Workout API",
+    version="1.0.0",
+    description="Browser demo at / — login demo/demo123. Swagger at /docs.",
+)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.api_url, "http://localhost:3000"],
+    allow_origins=[settings.api_url, "http://localhost:3000", "http://127.0.0.1:8002"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+if STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
 def get_db():
@@ -159,9 +173,17 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     return user
 
 
+@app.get("/")
+def demo_ui():
+    demo_path = STATIC_DIR / "demo.html"
+    if demo_path.exists():
+        return FileResponse(demo_path)
+    return {"message": "Workout API", "docs": "/docs", "health": "/health"}
+
+
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    return {"status": "ok", "demo_user": "demo / demo123"}
 
 
 @app.post("/auth/register", response_model=Token)
@@ -209,3 +231,10 @@ def create_routine(body: RoutineCreate, db: Session = Depends(get_db), user: Use
     db.commit()
     db.refresh(routine)
     return routine
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    port = int(os.getenv("PORT", str(DEFAULT_PORT)))
+    uvicorn.run("main:app", host="127.0.0.1", port=port, reload=True)
