@@ -1,6 +1,7 @@
 ﻿# Workout & Routine API
 
 **FastAPI backend** for user accounts, workout sessions, and custom routine planning with JWT authentication and SQLAlchemy ORM.
+<img width="1138" height="837" alt="image" src="https://github.com/user-attachments/assets/02c888f8-c865-4888-a146-ebec0dfc9bd7" />
 
 ![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=flat-square)
